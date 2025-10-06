@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://toplansin.com/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://toplansin.com/cookies</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://toplansin.com/kvkk</loc>
+    <priority>0.8</priority>
+  </url>
+    <url>
+    <loc>https://toplansin.com/sss</loc>
+    <priority>0.8</priority>
+  </url>
+    <url>
+    <loc>https://toplansin.com/privacy</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://toplansin.com/terms</loc>
+    <priority>0.7</priority>
+  </url>
+</urlset>
