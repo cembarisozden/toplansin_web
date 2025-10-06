@@ -136,19 +136,7 @@ export const Features = () => {
                     </p>
                   </div>
 
-                  {/* Decorative Arrow */}
-                  <div className="absolute bottom-4 right-4 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-1">
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent p-2">
-                      <svg
-                        className="h-full w-full text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </div>
+              
                 </div>
               </Card>
             );
