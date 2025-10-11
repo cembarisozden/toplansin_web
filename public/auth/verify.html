@@ -5,184 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Toplansın • Hesap İşlemi</title>
 
-  <!-- İsteğe bağlı: modern font -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* Tema renkleri */
-      --bg:#07130f;
-      --card:rgba(10,22,18,.6);
+      --bg:#06120e;
+      --ink:#eafff6;
+      --muted:#8ccbb1;
+      --ok:#22e6a8; --err:#ff6e6e;
+
+      --stroke:rgba(34,197,94,.22);
       --glass:rgba(255,255,255,.08);
-      --ink:#e7fff5;
-      --muted:#91cbb3;
-      --ok:#22e6a8;
-      --err:#ff7474;
-      --stroke:rgba(120,255,200,.18);
+      --cardTop:rgba(10,22,18,.82);
+      --cardBot:rgba(8,18,15,.96);
 
-      --brand-1:#00f5a0;
-      --brand-2:#00d9f5;
-      --brand-3:#10b981;
-      --brand-4:#34d399;
+      --brand1:#18e8a1; --brand2:#11b985; --brand3:#22c6cb;
 
-      --radius-xl:22px;
-      --radius-lg:16px;
-      --radius-sm:12px;
-      --shadow-lg:0 30px 120px rgba(0,0,0,.55);
-      --shadow-sm:0 8px 30px rgba(0,0,0,.25);
+      --r-xl:28px; --r-lg:18px; --r-md:14px;
+      --sh-lg:0 40px 130px rgba(0,0,0,.55);
+      --sh-md:0 12px 40px rgba(0,0,0,.28);
     }
 
     @media (prefers-color-scheme:light){
       :root{
-        --bg:#eef7f3;
-        --card:rgba(255,255,255,.75);
+        --bg:#eff7f3; --ink:#0b2119; --muted:#466055;
         --glass:rgba(0,0,0,.05);
-        --ink:#0b221a;
-        --muted:#3f5c4f;
-        --stroke:rgba(16,185,129,.18);
+        --cardTop:#ffffffb3; --cardBot:#ffffffff;
+        --stroke:rgba(16,185,129,.22);
       }
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;min-height:100%;display:grid;place-items:center;
+      margin:0; min-height:100%;
+      display:grid; place-items:center; overflow:hidden;
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       color:var(--ink);
-      overflow:hidden;
       background:
-        radial-gradient(1200px 520px at 10% -10%, rgba(0,245,160,.18), transparent 60%),
-        radial-gradient(900px 420px at 110% 20%, rgba(0,217,245,.15), transparent 60%),
-        linear-gradient(160deg, #06100d 0%, #08130f 35%, #0a1712 100%);
+        radial-gradient(1200px 520px at -10% -10%, rgba(0,245,160,.16), transparent 60%),
+        radial-gradient(900px 420px at 120% 20%, rgba(0,217,245,.14), transparent 60%),
+        linear-gradient(160deg, #05100c 0%, #08130f 35%, #0a1712 100%);
     }
 
-    /* Dekoratif gradient baloncuklar */
-    .blobs::before, .blobs::after{
-      content:""; position:absolute; inset:auto;
-      width:42vmax; height:42vmax; filter:blur(60px); opacity:.25; z-index:0;
-      background:radial-gradient(closest-side, var(--brand-2), transparent);
-      border-radius:50%;
-      animation: float 18s ease-in-out infinite;
-    }
-    .blobs::after{
-      right:-12vmax; top:-10vmax;
-      background:radial-gradient(closest-side, var(--brand-3), transparent);
-      animation-duration: 22s;
-    }
-    .blobs::before{
-      left:-14vmax; bottom:-12vmax;
-    }
-    @keyframes float{
-      0%,100%{ transform:translateY(0) }
-      50%{ transform:translateY(-2.5vmax) }
-    }
-
-    .wrap{
-      position:relative; z-index:1; width:min(760px,92vw); padding:24px;
-    }
-
+    .wrap{ width:min(880px,94vw); padding:26px; position:relative; z-index:1 }
     .card{
-      position:relative;
-      border-radius:var(--radius-xl);
-      background:linear-gradient(180deg, var(--card), rgba(10,22,18,.92));
-      backdrop-filter: blur(14px);
+      border-radius:var(--r-xl);
+      padding:32px;
+      background:linear-gradient(180deg,var(--cardTop),var(--cardBot));
       border:1px solid var(--stroke);
-      box-shadow:var(--shadow-lg);
-      padding:28px;
+      backdrop-filter:blur(14px);
+      box-shadow:var(--sh-lg);
+      position:relative;
+    }
+    /* neon kenar çizgisi */
+    .card::before{
+      content:""; position:absolute; inset:-2px; border-radius:calc(var(--r-xl) + 2px);
+      background:linear-gradient(145deg, transparent, rgba(24,232,161,.25), rgba(34,198,203,.22), transparent);
+      filter:blur(14px); z-index:-1;
     }
 
-    .header{
-      display:flex; align-items:center; gap:14px; margin-bottom:14px;
+    .header{ display:flex; align-items:center; gap:18px; margin-bottom:18px }
+    .logo{ height:56px; width:auto; border-radius:12px; box-shadow:var(--sh-md) }
+    .brand{
+      display:flex; flex-direction:column; gap:4px
     }
-    .logo{height:30px}
-    .chip{
-      margin-left:auto;
+    .brand h2{ margin:0; font-size:24px; letter-spacing:.3px }
+    .brand .tag{
       display:inline-flex; align-items:center; gap:8px;
-      padding:8px 12px; border-radius:999px; font-weight:900; letter-spacing:.3px;
-      color:#042015;
-      background:linear-gradient(135deg, var(--brand-4) 0%, var(--brand-3) 55%, var(--brand-2) 100%);
-      border:1px solid rgba(255,255,255,.18);
-      box-shadow:var(--shadow-sm);
+      width:max-content; padding:6px 12px; border-radius:999px;
+      font-weight:800; letter-spacing:.25px; color:#052116;
+      background:linear-gradient(135deg,var(--brand2),var(--brand1));
+      border:1px solid rgba(255,255,255,.2);
     }
 
     .status{
       display:flex; align-items:center; gap:10px;
-      padding:10px 12px; border-radius:12px; margin:8px 0 6px;
+      padding:12px 14px; border-radius:14px;
       background:var(--glass); border:1px solid var(--stroke);
-      font-weight:700; letter-spacing:.2px;
+      font-weight:800; letter-spacing:.2px; margin:6px 0 4px;
     }
-    .status.ok{ color:var(--ok) }
-    .status.err{ color:var(--err) }
+    .status.ok{ color:var(--ok) } .status.err{ color:var(--err) }
 
-    h1{margin:10px 0 6px; font-size:26px; letter-spacing:.2px}
-    p{margin:6px 0 0}
-    .muted{ color:var(--muted) }
+    h1{ margin:12px 0 6px; font-size:28px }
+    p{ margin:6px 0 0 } .muted{ color:var(--muted) }
 
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      margin-top:20px; padding:14px 18px; border-radius:var(--radius-sm);
-      font-weight:900; text-decoration:none; cursor:pointer; user-select:none;
-      color:#052116;
-      background:linear-gradient(135deg, #06b37e, #12e3a4);
-      border:1px solid rgba(255,255,255,.22);
-      box-shadow:0 8px 24px rgba(0, 220, 160, .25);
-      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
+      padding:16px 20px; border-radius:16px; margin-top:20px;
+      font-weight:900; letter-spacing:.2px; text-decoration:none; cursor:pointer;
+      color:#052016; background:linear-gradient(135deg,#0fbf86,#1ff0b0);
+      border:1px solid rgba(255,255,255,.22); box-shadow:0 10px 26px rgba(0,220,160,.25);
+      transition:filter .2s ease, transform .06s ease;
     }
-    .btn:hover{ filter:saturate(1.15) brightness(1.05) }
+    .btn:hover{ filter:saturate(1.08) brightness(1.05) }
     .btn:active{ transform:translateY(1px) }
 
-    .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:8px }
+    .actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:8px }
+    .actions .btn{ flex:1 }
+
+    .grid{ display:grid; grid-template-columns:1fr; gap:16px; margin-top:12px }
     @media (min-width:560px){ .grid{ grid-template-columns:1fr 1fr } }
 
     .field{ display:flex; flex-direction:column; gap:8px }
     .label{ font-weight:800; font-size:14px }
     .control{
-      position:relative;
-      border-radius:var(--radius-sm);
+      position:relative; border-radius:16px; overflow:hidden;
       border:1px solid var(--stroke);
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
     }
     .control input{
-      width:100%; padding:14px 14px 14px 44px;
-      background:transparent; outline:none; border:0; color:var(--ink);
-      font-size:15px;
+      width:100%; padding:16px 16px 16px 48px; border:0; outline:0; background:transparent; color:var(--ink); font-size:15px;
     }
     .control .icon{
-      position:absolute; left:12px; top:50%; transform:translateY(-50%);
-      opacity:.65; pointer-events:none; font-size:18px;
+      position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:.7; font-size:18px; pointer-events:none;
     }
-    .hint{font-size:12px; color:var(--muted)}
-
-    .actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:6px }
-    .actions .btn{ flex:1 }
+    .hint{ font-size:12px; color:var(--muted) }
 
     .hide{ display:none !important }
-
-    /* küçük başarı konfeti (yalın) */
-    .confetti{ position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .2s ease }
-    .confetti.show{ opacity:1 }
-    .confetti::before, .confetti::after{
-      content:"✨"; position:absolute; font-size:22px; animation: pop .9s ease forwards;
-    }
-    .confetti::before{ left:16%; top:6% }
-    .confetti::after{ right:10%; top:10% }
-    @keyframes pop{
-      0% { transform:translateY(0) scale(.8); opacity:.0 }
-      40% { opacity:1 }
-      100%{ transform:translateY(-18px) scale(1); opacity:.0 }
-    }
   </style>
 </head>
 <body>
-  <div class="blobs"></div>
-
   <div class="wrap">
     <div class="card">
       <div class="header">
-        <img class="logo" src="/logo.png" alt="Toplansın" />
-        <div class="chip">⚽ Toplansın</div>
+        <img class="logo" src="/logo.png" alt="Toplansın">
+        <div class="brand">
+          <h2>Toplansın</h2>
+          <div class="tag">⚽ Hesap İşlemi</div>
+        </div>
       </div>
 
       <div id="status" class="status">
@@ -193,8 +145,8 @@
       <h1 id="title">İşlem hazırlanıyor</h1>
       <p id="desc" class="muted">Lütfen bekleyin.</p>
 
-      <!-- Başarı CTA -->
-      <a id="cta" class="btn hide" href="/">Uygulamaya Dön</a>
+      <!-- Başarı butonu -->
+      <a id="cta" class="btn hide" href="#">Uygulamaya Dön</a>
 
       <!-- Şifre sıfırlama -->
       <form id="resetForm" class="hide" novalidate>
@@ -207,7 +159,6 @@
             </div>
             <div class="hint">En az 6 karakter ve <b>en az 1 rakam</b> içermeli.</div>
           </div>
-
           <div class="field">
             <label class="label" for="pw2">Yeni şifre (tekrar)</label>
             <div class="control">
@@ -222,8 +173,6 @@
           <a id="cancelBtn" class="btn" href="/">Vazgeç</a>
         </div>
       </form>
-
-      <div id="fx" class="confetti"></div>
     </div>
   </div>
 
@@ -234,7 +183,7 @@
       verifyPasswordResetCode, confirmPasswordReset
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-    /* 🔧 Web config — projendekiyle birebir aynı olmalı */
+    /* Firebase config — projendekiyle aynı olmalı */
     const firebaseConfig = {
       apiKey: "AIzaSyCdwm1oNvZ_9R306ukmd_M2_n7iCudRcQ4",
       authDomain: "toplansin-e4363.firebaseapp.com",
@@ -244,6 +193,11 @@
       appId: "1:450679317964:web:08de0d07bb040cf848e969",
       measurementId: "G-CVPG2R0XGB"
     };
+
+    /* 🔗 Uygulamaya Dön davranışı (akıllı): derin link → mağaza → continueUrl */
+    const APP_SCHEME = "toplansin://open";                // kendi scheme'in
+    const IOS_STORE  = "https://apps.apple.com/tr/app/toplansın/id6746457731";
+    const AND_STORE  = "https://play.google.com/store/apps/details?id=com.toplansin.toplansin";
 
     initializeApp(firebaseConfig);
     const auth = getAuth();
@@ -258,6 +212,34 @@
     const oobCode = qp.get("oobCode");
     const continueUrl = qp.get("continueUrl") || "/";
 
+    /* Uygulamaya dön: mobilde derin bağ, masaüstünde continueUrl */
+    function openAppSmart(){
+      const ua = navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad|ipod/.test(ua);
+      const isAndroid = /android/.test(ua);
+      const isMobile = isIOS || isAndroid;
+
+      if (!isMobile) { location.href = continueUrl; return; }
+
+      const fallback = ()=> location.href = isIOS ? IOS_STORE : AND_STORE;
+
+      let opened = false;
+      const t = setTimeout(()=>{ if (!opened) fallback(); }, 900);
+
+      const hidden = document.hidden;
+      const blur = ()=>{ opened = true; clearTimeout(t); document.removeEventListener('visibilitychange', blur); };
+
+      document.addEventListener('visibilitychange', blur, { once:true });
+
+      // Derin link dene
+      const a = document.createElement('a'); a.href = APP_SCHEME; document.body.appendChild(a); a.click();
+      // iOS için ayrıca
+      window.location.assign(APP_SCHEME);
+
+      // Eğer görünürlük değişmezse 900ms sonra mağaza
+      // Başarılı açılırsa visibilitychange tetiklenir ve fallback iptal olur.
+    }
+
     const statusEl = $("status");
     const statusIcon = $("statusIcon");
     function setStatus(type, text){
@@ -266,12 +248,9 @@
       statusIcon.textContent = type === "ok" ? "🎉" : type === "err" ? "⚠️" : "⏳";
     }
 
-    function sparkle(){ $("fx").classList.add("show"); setTimeout(()=>$("fx").classList.remove("show"), 900); }
-
     function fail(title, msg){
       set("title", title); set("desc", msg);
-      $("desc").className = "state-err";
-      setStatus("err", "İşlem başarısız");
+      $("desc").className = "state-err"; setStatus("err", "İşlem başarısız");
       hide("resetForm"); show("cta");
     }
 
@@ -282,16 +261,12 @@
         await checkActionCode(auth, oobCode);
         await applyActionCode(auth, oobCode);
         set("title","E-posta doğrulandı");
-        set("desc","Hesabın başarıyla aktifleştirildi.");
-        $("desc").className = "state-ok";
+        set("desc","Hesabın başarıyla aktifleştirildi."); $("desc").className="state-ok";
         setStatus("ok", "Doğrulama tamamlandı");
-        const cta = $("cta"); cta.href = continueUrl; show("cta");
-        sparkle();
-        // Otomatik yönlendirme istersen:
-        // setTimeout(()=>location.replace(continueUrl), 1200);
+        show("cta");
       }catch(e){
         console.error(e);
-        fail("Doğrulama başarısız", "Bağlantı süresi dolmuş veya daha önce kullanılmış olabilir. Lütfen yeni bir doğrulama isteyin.");
+        fail("Doğrulama başarısız","Bağlantı süresi dolmuş veya daha önce kullanılmış olabilir. Lütfen yeni bir doğrulama isteyin.");
       }
     }
 
@@ -301,16 +276,14 @@
         setStatus("", "Kod kontrol ediliyor…");
         await verifyPasswordResetCode(auth, oobCode);
         set("title","Yeni şifreni belirle");
-        set("desc","Aşağıdan güçlü bir şifre oluştur."); $("desc").className = "muted";
-        setStatus("", "Hazır");
-        show("resetForm");
+        set("desc","Aşağıdan güçlü bir şifre oluştur."); $("desc").className="muted";
+        setStatus("", "Hazır"); show("resetForm");
       }catch(e){
         console.error(e);
-        fail("Kod geçersiz", "Bağlantı süresi dolmuş veya zaten kullanılmış olabilir. Lütfen yeni bir sıfırlama isteyin.");
+        fail("Kod geçersiz","Bağlantı süresi dolmuş veya zaten kullanılmış olabilir. Lütfen yeni bir sıfırlama isteyin.");
       }
     }
 
-    // ✓ Şifre politikası: min 6, en az 1 rakam
     function validPassword(p){ return /^(?=.*\d).{6,}$/.test(p); }
 
     $("resetForm").addEventListener("submit", async (ev)=>{
@@ -326,10 +299,7 @@
         await confirmPasswordReset(auth, oobCode, p1);
         set("title","Şifre güncellendi");
         set("desc","Yeni şifrenle giriş yapabilirsin."); $("desc").className="state-ok";
-        setStatus("ok", "İşlem tamam");
-        hide("resetForm");
-        const cta=$("cta"); cta.href=continueUrl; cta.textContent="Uygulamaya Dön"; show("cta");
-        sparkle();
+        setStatus("ok", "İşlem tamam"); hide("resetForm"); show("cta");
       }catch(e){
         console.error(e);
         alert("Şifre güncellenemedi. Lütfen farklı bir şifre deneyin.");
@@ -339,6 +309,9 @@
     });
 
     (async()=>{
+      // CTA: derin bağlantı aç
+      $("cta").addEventListener("click", (e)=>{ e.preventDefault(); openAppSmart(); });
+
       if (mode === "verifyEmail") await handleVerifyEmail();
       else if (mode === "resetPassword") await handleResetPassword();
       else fail("Geçersiz istek","mode parametresi eksik veya desteklenmiyor.");
