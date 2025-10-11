@@ -4,83 +4,227 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Toplansın • Hesap İşlemi</title>
+
+  <!-- İsteğe bağlı: modern font -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg:#081411;--card:#0c1713;--muted:#9ccdb9;--ok:#14e59b;--err:#ff6b6b;--ink:#e6fff4;
-      --emerald:#10b981;--emerald-2:#059669;--stroke:rgba(34,197,94,.18)
+      /* Tema renkleri */
+      --bg:#07130f;
+      --card:rgba(10,22,18,.6);
+      --glass:rgba(255,255,255,.08);
+      --ink:#e7fff5;
+      --muted:#91cbb3;
+      --ok:#22e6a8;
+      --err:#ff7474;
+      --stroke:rgba(120,255,200,.18);
+
+      --brand-1:#00f5a0;
+      --brand-2:#00d9f5;
+      --brand-3:#10b981;
+      --brand-4:#34d399;
+
+      --radius-xl:22px;
+      --radius-lg:16px;
+      --radius-sm:12px;
+      --shadow-lg:0 30px 120px rgba(0,0,0,.55);
+      --shadow-sm:0 8px 30px rgba(0,0,0,.25);
     }
+
     @media (prefers-color-scheme:light){
-      :root{--bg:#f3f7f5;--card:#ffffff;--muted:#3b5a4b;--ink:#0c1b14;--stroke:#d9efe5}
+      :root{
+        --bg:#eef7f3;
+        --card:rgba(255,255,255,.75);
+        --glass:rgba(0,0,0,.05);
+        --ink:#0b221a;
+        --muted:#3f5c4f;
+        --stroke:rgba(16,185,129,.18);
+      }
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;display:grid;place-items:center;min-height:100%;
-      background:radial-gradient(1100px 400px at 50% -10%, rgba(16,185,129,.12), transparent 60%), var(--bg);
-      color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
+      margin:0;min-height:100%;display:grid;place-items:center;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--ink);
+      overflow:hidden;
+      background:
+        radial-gradient(1200px 520px at 10% -10%, rgba(0,245,160,.18), transparent 60%),
+        radial-gradient(900px 420px at 110% 20%, rgba(0,217,245,.15), transparent 60%),
+        linear-gradient(160deg, #06100d 0%, #08130f 35%, #0a1712 100%);
     }
+
+    /* Dekoratif gradient baloncuklar */
+    .blobs::before, .blobs::after{
+      content:""; position:absolute; inset:auto;
+      width:42vmax; height:42vmax; filter:blur(60px); opacity:.25; z-index:0;
+      background:radial-gradient(closest-side, var(--brand-2), transparent);
+      border-radius:50%;
+      animation: float 18s ease-in-out infinite;
+    }
+    .blobs::after{
+      right:-12vmax; top:-10vmax;
+      background:radial-gradient(closest-side, var(--brand-3), transparent);
+      animation-duration: 22s;
+    }
+    .blobs::before{
+      left:-14vmax; bottom:-12vmax;
+    }
+    @keyframes float{
+      0%,100%{ transform:translateY(0) }
+      50%{ transform:translateY(-2.5vmax) }
+    }
+
+    .wrap{
+      position:relative; z-index:1; width:min(760px,92vw); padding:24px;
+    }
+
     .card{
-      width:min(640px,92vw);background:var(--card);border:1px solid var(--stroke);
-      border-radius:18px;padding:28px 28px 24px;box-shadow:0 24px 70px rgba(0,0,0,.45)
+      position:relative;
+      border-radius:var(--radius-xl);
+      background:linear-gradient(180deg, var(--card), rgba(10,22,18,.92));
+      backdrop-filter: blur(14px);
+      border:1px solid var(--stroke);
+      box-shadow:var(--shadow-lg);
+      padding:28px;
     }
-    .hdr{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-    .logo{height:28px}
-    .badge{
-      margin-left:auto;display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
-      background:linear-gradient(135deg,#34d399 0%,#10b981 60%,#22c55e 100%);
-      color:#052016;font-weight:900;font-size:12px;letter-spacing:.3px
+
+    .header{
+      display:flex; align-items:center; gap:14px; margin-bottom:14px;
     }
-    h1{margin:6px 0 4px;font-size:22px}
-    .muted{color:var(--muted)}
-    .state-ok{color:var(--ok)} .state-err{color:var(--err)}
+    .logo{height:30px}
+    .chip{
+      margin-left:auto;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px; font-weight:900; letter-spacing:.3px;
+      color:#042015;
+      background:linear-gradient(135deg, var(--brand-4) 0%, var(--brand-3) 55%, var(--brand-2) 100%);
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:var(--shadow-sm);
+    }
+
+    .status{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:12px; margin:8px 0 6px;
+      background:var(--glass); border:1px solid var(--stroke);
+      font-weight:700; letter-spacing:.2px;
+    }
+    .status.ok{ color:var(--ok) }
+    .status.err{ color:var(--err) }
+
+    h1{margin:10px 0 6px; font-size:26px; letter-spacing:.2px}
+    p{margin:6px 0 0}
+    .muted{ color:var(--muted) }
 
     .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      margin-top:18px;background:linear-gradient(135deg,var(--emerald-2),var(--emerald));
-      color:#04160f;padding:12px 18px;border-radius:12px;font-weight:900;text-decoration:none;border:1px solid rgba(255,255,255,.22)
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      margin-top:20px; padding:14px 18px; border-radius:var(--radius-sm);
+      font-weight:900; text-decoration:none; cursor:pointer; user-select:none;
+      color:#052116;
+      background:linear-gradient(135deg, #06b37e, #12e3a4);
+      border:1px solid rgba(255,255,255,.22);
+      box-shadow:0 8px 24px rgba(0, 220, 160, .25);
+      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
     }
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    .row .btn{flex:1}
+    .btn:hover{ filter:saturate(1.15) brightness(1.05) }
+    .btn:active{ transform:translateY(1px) }
 
-    .field{margin:14px 0}
-    .field label{display:block;margin:0 0 6px;font-weight:800;font-size:14px}
-    .field input{
-      width:100%;padding:12px;border-radius:12px;border:1px solid var(--stroke);background:transparent;color:inherit;outline:none
+    .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:8px }
+    @media (min-width:560px){ .grid{ grid-template-columns:1fr 1fr } }
+
+    .field{ display:flex; flex-direction:column; gap:8px }
+    .label{ font-weight:800; font-size:14px }
+    .control{
+      position:relative;
+      border-radius:var(--radius-sm);
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      overflow:hidden;
     }
-    .hint{font-size:12px;color:var(--muted);margin-top:6px}
-    .hide{display:none!important}
+    .control input{
+      width:100%; padding:14px 14px 14px 44px;
+      background:transparent; outline:none; border:0; color:var(--ink);
+      font-size:15px;
+    }
+    .control .icon{
+      position:absolute; left:12px; top:50%; transform:translateY(-50%);
+      opacity:.65; pointer-events:none; font-size:18px;
+    }
+    .hint{font-size:12px; color:var(--muted)}
+
+    .actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:6px }
+    .actions .btn{ flex:1 }
+
+    .hide{ display:none !important }
+
+    /* küçük başarı konfeti (yalın) */
+    .confetti{ position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .2s ease }
+    .confetti.show{ opacity:1 }
+    .confetti::before, .confetti::after{
+      content:"✨"; position:absolute; font-size:22px; animation: pop .9s ease forwards;
+    }
+    .confetti::before{ left:16%; top:6% }
+    .confetti::after{ right:10%; top:10% }
+    @keyframes pop{
+      0% { transform:translateY(0) scale(.8); opacity:.0 }
+      40% { opacity:1 }
+      100%{ transform:translateY(-18px) scale(1); opacity:.0 }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="hdr">
-      <img class="logo" src="/logo.png" alt="Toplansın">
-      <div class="badge"><span>⚽</span> Toplansın</div>
+  <div class="blobs"></div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <img class="logo" src="/logo.png" alt="Toplansın" />
+        <div class="chip">⚽ Toplansın</div>
+      </div>
+
+      <div id="status" class="status">
+        <span id="statusIcon">⏳</span>
+        <span>İşlem yapılıyor…</span>
+      </div>
+
+      <h1 id="title">İşlem hazırlanıyor</h1>
+      <p id="desc" class="muted">Lütfen bekleyin.</p>
+
+      <!-- Başarı CTA -->
+      <a id="cta" class="btn hide" href="/">Uygulamaya Dön</a>
+
+      <!-- Şifre sıfırlama -->
+      <form id="resetForm" class="hide" novalidate>
+        <div class="grid">
+          <div class="field">
+            <label class="label" for="pw1">Yeni şifre</label>
+            <div class="control">
+              <span class="icon">🔒</span>
+              <input id="pw1" name="pw1" type="password" autocomplete="new-password" required />
+            </div>
+            <div class="hint">En az 6 karakter ve <b>en az 1 rakam</b> içermeli.</div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="pw2">Yeni şifre (tekrar)</label>
+            <div class="control">
+              <span class="icon">✅</span>
+              <input id="pw2" name="pw2" type="password" autocomplete="new-password" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="submitBtn" type="submit" class="btn">Şifreyi Kaydet</button>
+          <a id="cancelBtn" class="btn" href="/">Vazgeç</a>
+        </div>
+      </form>
+
+      <div id="fx" class="confetti"></div>
     </div>
-
-    <h1 id="title">İşlem yapılıyor…</h1>
-    <p id="desc" class="muted">Lütfen bekleyin.</p>
-
-    <!-- Başarı butonu -->
-    <a id="cta" class="btn hide" href="/">Uygulamaya Dön</a>
-
-    <!-- Şifre sıfırlama -->
-    <form id="resetForm" class="hide" novalidate>
-      <div class="field">
-        <label for="pw1">Yeni şifre</label>
-        <input id="pw1" name="pw1" type="password" autocomplete="new-password" required />
-        <div class="hint">En az 6 karakter ve <b>en az 1 rakam</b> içermeli.</div>
-      </div>
-      <div class="field">
-        <label for="pw2">Yeni şifre (tekrar)</label>
-        <input id="pw2" name="pw2" type="password" autocomplete="new-password" required />
-      </div>
-      <div class="row">
-        <button id="submitBtn" type="submit" class="btn">Şifreyi Kaydet</button>
-        <a id="cancelBtn" class="btn" href="/">Vazgeç</a>
-      </div>
-    </form>
   </div>
 
   <script type="module">
@@ -90,7 +234,7 @@
       verifyPasswordResetCode, confirmPasswordReset
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-    // 🔧 Web config (kendi projenden birebir kopyala)
+    /* 🔧 Web config — projendekiyle birebir aynı olmalı */
     const firebaseConfig = {
       apiKey: "AIzaSyCdwm1oNvZ_9R306ukmd_M2_n7iCudRcQ4",
       authDomain: "toplansin-e4363.firebaseapp.com",
@@ -114,23 +258,37 @@
     const oobCode = qp.get("oobCode");
     const continueUrl = qp.get("continueUrl") || "/";
 
+    const statusEl = $("status");
+    const statusIcon = $("statusIcon");
+    function setStatus(type, text){
+      statusEl.className = "status " + (type || "");
+      statusEl.querySelector("span:nth-child(2)").textContent = text;
+      statusIcon.textContent = type === "ok" ? "🎉" : type === "err" ? "⚠️" : "⏳";
+    }
+
+    function sparkle(){ $("fx").classList.add("show"); setTimeout(()=>$("fx").classList.remove("show"), 900); }
+
     function fail(title, msg){
-      set("title", title);
-      set("desc", msg);
+      set("title", title); set("desc", msg);
       $("desc").className = "state-err";
+      setStatus("err", "İşlem başarısız");
       hide("resetForm"); show("cta");
     }
 
     async function handleVerifyEmail(){
       if (!oobCode) return fail("Geçersiz bağlantı", "Kod (oobCode) bulunamadı.");
       try{
+        setStatus("", "Kod doğrulanıyor…");
         await checkActionCode(auth, oobCode);
         await applyActionCode(auth, oobCode);
-        set("title","E-posta doğrulandı 🎉");
+        set("title","E-posta doğrulandı");
         set("desc","Hesabın başarıyla aktifleştirildi.");
         $("desc").className = "state-ok";
+        setStatus("ok", "Doğrulama tamamlandı");
         const cta = $("cta"); cta.href = continueUrl; show("cta");
-        // Otomatik yönlendirme istersen: setTimeout(()=>location.replace(continueUrl), 1200);
+        sparkle();
+        // Otomatik yönlendirme istersen:
+        // setTimeout(()=>location.replace(continueUrl), 1200);
       }catch(e){
         console.error(e);
         fail("Doğrulama başarısız", "Bağlantı süresi dolmuş veya daha önce kullanılmış olabilir. Lütfen yeni bir doğrulama isteyin.");
@@ -140,10 +298,11 @@
     async function handleResetPassword(){
       if (!oobCode) return fail("Geçersiz bağlantı", "Kod (oobCode) bulunamadı.");
       try{
+        setStatus("", "Kod kontrol ediliyor…");
         await verifyPasswordResetCode(auth, oobCode);
         set("title","Yeni şifreni belirle");
-        set("desc","Aşağıdan güçlü bir şifre oluştur.");
-        $("desc").className = "muted";
+        set("desc","Aşağıdan güçlü bir şifre oluştur."); $("desc").className = "muted";
+        setStatus("", "Hazır");
         show("resetForm");
       }catch(e){
         console.error(e);
@@ -161,15 +320,21 @@
       if (!validPassword(p1)) return alert("Şifre en az 6 karakter olmalı ve en az 1 rakam içermeli.");
       if (p1 !== p2) return alert("Şifreler eşleşmiyor.");
       $("submitBtn").disabled = true;
+
       try{
+        setStatus("", "Şifre güncelleniyor…");
         await confirmPasswordReset(auth, oobCode, p1);
-        set("title","Şifre güncellendi ✅");
+        set("title","Şifre güncellendi");
         set("desc","Yeni şifrenle giriş yapabilirsin."); $("desc").className="state-ok";
-        hide("resetForm"); const cta=$("cta"); cta.href=continueUrl; cta.textContent="Uygulamaya Dön"; show("cta");
+        setStatus("ok", "İşlem tamam");
+        hide("resetForm");
+        const cta=$("cta"); cta.href=continueUrl; cta.textContent="Uygulamaya Dön"; show("cta");
+        sparkle();
       }catch(e){
         console.error(e);
         alert("Şifre güncellenemedi. Lütfen farklı bir şifre deneyin.");
         $("submitBtn").disabled = false;
+        setStatus("err", "Güncelleme başarısız");
       }
     });
 
