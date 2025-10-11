@@ -3,101 +3,180 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>E-posta Doğrulama • Toplansın</title>
+  <title>Toplansın • Hesap İşlemi</title>
   <style>
-    :root{--emerald:#10b981}
+    :root{
+      --bg:#081411;--card:#0c1713;--muted:#9ccdb9;--ok:#14e59b;--err:#ff6b6b;--ink:#e6fff4;
+      --emerald:#10b981;--emerald-2:#059669;--stroke:rgba(34,197,94,.18)
+    }
+    @media (prefers-color-scheme:light){
+      :root{--bg:#f3f7f5;--card:#ffffff;--muted:#3b5a4b;--ink:#0c1b14;--stroke:#d9efe5}
+    }
+    *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;display:grid;place-items:center;min-height:100%;
-      background:#081411;color:#e6fff4;font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:radial-gradient(1100px 400px at 50% -10%, rgba(16,185,129,.12), transparent 60%), var(--bg);
+      color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif
     }
     .card{
-      width:min(560px,92vw);background:#0c1713;border:1px solid rgba(34,197,94,.18);
-      border-radius:16px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.55)
+      width:min(640px,92vw);background:var(--card);border:1px solid var(--stroke);
+      border-radius:18px;padding:28px 28px 24px;box-shadow:0 24px 70px rgba(0,0,0,.45)
     }
-    h1{margin:0 0 8px;font-size:22px}
-    .muted{color:#9ccdb9}
-    .ok{color:#14e59b}
-    .err{color:#ff7575}
+    .hdr{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+    .logo{height:28px}
+    .badge{
+      margin-left:auto;display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
+      background:linear-gradient(135deg,#34d399 0%,#10b981 60%,#22c55e 100%);
+      color:#052016;font-weight:900;font-size:12px;letter-spacing:.3px
+    }
+    h1{margin:6px 0 4px;font-size:22px}
+    .muted{color:var(--muted)}
+    .state-ok{color:var(--ok)} .state-err{color:var(--err)}
+
     .btn{
-      display:inline-block;margin-top:18px;background:linear-gradient(135deg,#047857,#10b981);
-      color:#04160f;padding:12px 18px;border-radius:12px;font-weight:800;text-decoration:none
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      margin-top:18px;background:linear-gradient(135deg,var(--emerald-2),var(--emerald));
+      color:#04160f;padding:12px 18px;border-radius:12px;font-weight:900;text-decoration:none;border:1px solid rgba(255,255,255,.22)
     }
-    @media (prefers-color-scheme: light){
-      body{background:#f3f7f5;color:#0c1b14}
-      .card{background:#fff;border-color:#d9efe5;box-shadow:0 10px 28px rgba(7,59,37,.08)}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row .btn{flex:1}
+
+    .field{margin:14px 0}
+    .field label{display:block;margin:0 0 6px;font-weight:800;font-size:14px}
+    .field input{
+      width:100%;padding:12px;border-radius:12px;border:1px solid var(--stroke);background:transparent;color:inherit;outline:none
     }
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .hide{display:none!important}
   </style>
 </head>
 <body>
   <div class="card">
-    <h1 id="title">E-posta doğrulanıyor…</h1>
-    <p class="muted" id="desc">Lütfen bekleyin.</p>
-    <a id="cta" class="btn" style="display:none" href="/">Uygulamaya Dön</a>
+    <div class="hdr">
+      <img class="logo" src="/logo.png" alt="Toplansın">
+      <div class="badge"><span>⚽</span> Toplansın</div>
+    </div>
+
+    <h1 id="title">İşlem yapılıyor…</h1>
+    <p id="desc" class="muted">Lütfen bekleyin.</p>
+
+    <!-- Başarı butonu -->
+    <a id="cta" class="btn hide" href="/">Uygulamaya Dön</a>
+
+    <!-- Şifre sıfırlama -->
+    <form id="resetForm" class="hide" novalidate>
+      <div class="field">
+        <label for="pw1">Yeni şifre</label>
+        <input id="pw1" name="pw1" type="password" autocomplete="new-password" required />
+        <div class="hint">En az 6 karakter ve <b>en az 1 rakam</b> içermeli.</div>
+      </div>
+      <div class="field">
+        <label for="pw2">Yeni şifre (tekrar)</label>
+        <input id="pw2" name="pw2" type="password" autocomplete="new-password" required />
+      </div>
+      <div class="row">
+        <button id="submitBtn" type="submit" class="btn">Şifreyi Kaydet</button>
+        <a id="cancelBtn" class="btn" href="/">Vazgeç</a>
+      </div>
+    </form>
   </div>
 
   <script type="module">
-    // --- Firebase (modüler SDK, <script type="module"> ile) ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAuth, applyActionCode, checkActionCode } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getAuth, applyActionCode, checkActionCode,
+      verifyPasswordResetCode, confirmPasswordReset
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-    // 🔽 Konsoldan aldığın web config’i buraya yapıştır:
+    // 🔧 Web config (kendi projenden birebir kopyala)
     const firebaseConfig = {
       apiKey: "AIz...QdQ4",
       authDomain: "toplansin-e4363.firebaseapp.com",
       projectId: "toplansin-e4363",
       storageBucket: "toplansin-e4363.appspot.com",
       messagingSenderId: "456...964",
-      appId: "1:456...964:web:...e969",
-      // measurementId opsiyonel
+      appId: "1:456...964:web:...e969"
     };
 
-    // --- Init ---
     initializeApp(firebaseConfig);
     const auth = getAuth();
 
-    // --- URL paramlarını al ---
-    const params = new URLSearchParams(location.search);
-    const mode = params.get("mode");
-    const oobCode = params.get("oobCode");
-    const continueUrl = params.get("continueUrl") || "/"; // istersen burada /app, /auth-done yap
-
     const $ = (id)=>document.getElementById(id);
-    const set = (id, html)=>{$(id).innerHTML = html};
+    const set = (id, html)=>{ $(id).innerHTML = html; };
+    const show = (id)=>$(id).classList.remove("hide");
+    const hide = (id)=>$(id).classList.add("hide");
 
-    async function run(){
-      if (mode !== "verifyEmail" || !oobCode) {
-        set("title","Geçersiz bağlantı");
-        set("desc","Kod veya mod parametresi eksik.");
-        $("desc").className = "err";
-        return;
-      }
-      try {
-        // (Opsiyonel) kod geçerli mi kontrol et
+    const qp = new URLSearchParams(location.search);
+    const mode = qp.get("mode");
+    const oobCode = qp.get("oobCode");
+    const continueUrl = qp.get("continueUrl") || "/";
+
+    function fail(title, msg){
+      set("title", title);
+      set("desc", msg);
+      $("desc").className = "state-err";
+      hide("resetForm"); show("cta");
+    }
+
+    async function handleVerifyEmail(){
+      if (!oobCode) return fail("Geçersiz bağlantı", "Kod (oobCode) bulunamadı.");
+      try{
         await checkActionCode(auth, oobCode);
-
-        // Asıl doğrulama
         await applyActionCode(auth, oobCode);
-
-        set("title", "E-posta doğrulandı 🎉");
-        set("desc", "Hesabın başarıyla aktifleştirildi.");
-        $("desc").className = "ok";
-
-        // “Devam Et” düğmesi
-        const cta = $("cta");
-        cta.href = continueUrl;
-        cta.style.display = "inline-block";
-
-        // Otomatik yönlendirme (isteğe bağlı)
-        // setTimeout(()=>location.assign(continueUrl), 1200);
-      } catch (e){
+        set("title","E-posta doğrulandı 🎉");
+        set("desc","Hesabın başarıyla aktifleştirildi.");
+        $("desc").className = "state-ok";
+        const cta = $("cta"); cta.href = continueUrl; show("cta");
+        // Otomatik yönlendirme istersen: setTimeout(()=>location.replace(continueUrl), 1200);
+      }catch(e){
         console.error(e);
-        set("title","Doğrulama başarısız");
-        set("desc","Bağlantı süresi dolmuş veya daha önce kullanılmış olabilir. Lütfen yeniden deneyin.");
-        $("desc").className = "err";
+        fail("Doğrulama başarısız", "Bağlantı süresi dolmuş veya daha önce kullanılmış olabilir. Lütfen yeni bir doğrulama isteyin.");
       }
     }
-    run();
+
+    async function handleResetPassword(){
+      if (!oobCode) return fail("Geçersiz bağlantı", "Kod (oobCode) bulunamadı.");
+      try{
+        await verifyPasswordResetCode(auth, oobCode);
+        set("title","Yeni şifreni belirle");
+        set("desc","Aşağıdan güçlü bir şifre oluştur.");
+        $("desc").className = "muted";
+        show("resetForm");
+      }catch(e){
+        console.error(e);
+        fail("Kod geçersiz", "Bağlantı süresi dolmuş veya zaten kullanılmış olabilir. Lütfen yeni bir sıfırlama isteyin.");
+      }
+    }
+
+    // ✓ Şifre politikası: min 6, en az 1 rakam
+    function validPassword(p){ return /^(?=.*\d).{6,}$/.test(p); }
+
+    $("resetForm").addEventListener("submit", async (ev)=>{
+      ev.preventDefault();
+      const p1 = $("pw1").value.trim();
+      const p2 = $("pw2").value.trim();
+      if (!validPassword(p1)) return alert("Şifre en az 6 karakter olmalı ve en az 1 rakam içermeli.");
+      if (p1 !== p2) return alert("Şifreler eşleşmiyor.");
+      $("submitBtn").disabled = true;
+      try{
+        await confirmPasswordReset(auth, oobCode, p1);
+        set("title","Şifre güncellendi ✅");
+        set("desc","Yeni şifrenle giriş yapabilirsin."); $("desc").className="state-ok";
+        hide("resetForm"); const cta=$("cta"); cta.href=continueUrl; cta.textContent="Uygulamaya Dön"; show("cta");
+      }catch(e){
+        console.error(e);
+        alert("Şifre güncellenemedi. Lütfen farklı bir şifre deneyin.");
+        $("submitBtn").disabled = false;
+      }
+    });
+
+    (async()=>{
+      if (mode === "verifyEmail") await handleVerifyEmail();
+      else if (mode === "resetPassword") await handleResetPassword();
+      else fail("Geçersiz istek","mode parametresi eksik veya desteklenmiyor.");
+    })();
   </script>
 </body>
 </html>
