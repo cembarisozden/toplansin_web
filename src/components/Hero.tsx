@@ -91,7 +91,7 @@ export const Hero = () => {
               </a>
 
               <a
-                href="hhttps://apps.apple.com/us/app/toplansın/id6746457731"
+                href="https://apps.apple.com/us/app/toplansın/id6746457731"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative overflow-hidden rounded-2xl border-2 border-border bg-card px-6 py-5 shadow-lg transition-all hover:scale-[1.02] hover:border-primary hover:shadow-premium active:scale-[0.98]"
